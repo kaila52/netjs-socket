@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Websockets Client</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+
+
+</head>
+
+<body>
+
+    <section class="msger">
+        <header class="msger-header">
+            <div class="msger-header-title">
+                <i class="fas fa-comment-alt"></i> SimpleChat
+            </div>
+            <div class="msger-header-options">
+                <span><i class="fas fa-cog"></i></span>
+            </div>
+        </header>
+
+        <main class="msger-chat">
+
+            <div class="msg left-msg">
+                <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)">
+                </div>
+                <div class="msg-bubble">
+                    <div class="msg-info">
+                        <div class="msg-info-name">User</div>
+                        <div class="msg-info-time">12:45</div>
+                    </div>
+
+                    <div class="msg-text">
+                        Hi, welcome to SimpleChat! Go ahead and send me a message. 😄
+                    </div>
+                </div>
+            </div>
+
+            <div class="msg right-msg">
+                <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)">
+                </div>
+                <div class="msg-bubble">
+                    <div class="msg-info">
+                        <div class="msg-info-name">Panpage</div>
+                        <div class="msg-info-time">12:46</div>
+                    </div>
+
+                    <div class="msg-text">
+                        You can change your name in JS section!
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <div class="msger-inputarea">
+            <input type="text" class="msger-input" placeholder="Enter your message...">
+            <button type="text" class="msger-send-btn">Send</button>
+        </div>
+    </section>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script>
+        var socket = io("https://cautious-marmalade-tarn.glitch.me");
+        socket.emit("join-room-fanpage", "page-pro");
+        socket.on("page-pro", data => {
+            console.log(data);
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds()
+            $(".msger-chat").append(`
+            <div class="msg left-msg">
+                <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/145/145867.svg)">
+                </div>
+                <div class="msg-bubble">
+                    <div class="msg-info">
+                        <div class="msg-info-name">User</div>
+                        <div class="msg-info-time">${time}</div>
+                    </div>
+
+                    <div class="msg-text">
+                        ${data.message}
+                    </div>
+                </div>
+            </div>
+            `);
+            $(".msger-chat").scrollTop(500)
+        });
+
+        $(document).ready(function () {
+            $(".msger-send-btn").click(() => {
+                var dt = new Date();
+                var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds()
+                socket.emit("listen-receive-messenge", {
+                    id: "3038700859532768",
+                    text: $(".msger-input").val()
+                })
+                $(".msger-chat").append(`
+                <div class="msg right-msg">
+                    <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)">
+                    </div>
+                    <div class="msg-bubble">
+                        <div class="msg-info">
+                            <div class="msg-info-name">Panpage</div>
+                            <div class="msg-info-time">${time}</div>
+                        </div>
+
+                        <div class="msg-text">
+                            ${$(".msger-input").val()}
+                        </div>
+                    </div>
+                </div>
+                `);
+                $(".msger-input").val('')
+                $(".msger-chat").scrollTop(500)
+            })
+
+        })
+
+
+    </script>
+</body>
+
+</html>
